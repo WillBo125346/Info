@@ -3,51 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My IP & System Info</title>
+    <title>Virus Detected</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            margin: 50px;
+            margin: 0;
+            padding: 0;
+            background-color: red;
+            color: white;
         }
-        .alert {
-            background-color: #ffcccb;
+        .popup {
+            background-color: black;
             color: red;
-            font-weight: bold;
+            border: 5px solid red;
             padding: 20px;
-            border: 2px solid red;
-            display: none;
+            font-size: 25px;
+            font-weight: bold;
+            margin-top: 200px;
         }
-        .error {
+        .btn {
+            background-color: black;
             color: red;
             font-size: 20px;
+            border: 2px solid red;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        #systemInfo {
+            background-color: white;
+            color: black;
+            border: 2px solid red;
+            padding: 15px;
+            font-size: 18px;
+            margin-top: 20px;
+            display: none; /* Hidden by default */
+        }
+        #systemInfo h3 {
+            margin: 10px 0;
+        }
+        #countdown {
+            font-size: 30px;
             font-weight: bold;
+            color: yellow;
+            margin-top: 30px;
+        }
+        /* More violent glitch effect */
+        .glitch {
+            animation: glitch-animation 0.1s infinite;
+            transform: scale(1.1);
+            background-color: black;
+            color: green;
+        }
+
+        @keyframes glitch-animation {
+            0% { transform: translateX(0); }
+            10% { transform: translateX(-10px); }
+            20% { transform: translateX(10px); }
+            30% { transform: translateX(-15px); }
+            40% { transform: translateX(15px); }
+            50% { transform: translateX(-20px); }
+            60% { transform: translateX(20px); }
+            70% { transform: translateX(-25px); }
+            80% { transform: translateX(25px); }
+            90% { transform: translateX(-30px); }
+            100% { transform: translateX(0); }
+        }
+        
+        /* Crash look */
+        .crash {
+            background-color: black;
+            color: green;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 18px;
+            text-align: left;
+            padding: 20px;
+            margin-top: 50px;
+            display: none;
+        }
+
+        .crash .error {
+            margin: 10px 0;
+            color: red;
+            font-weight: bold;
+        }
+
+        /* IP address in same style as virus alert */
+        #ip {
+            color: red;
+            background-color: black;
+            padding: 5px;
         }
     </style>
 </head>
 <body>
-    <h1>Your IP & System Info</h1>
-    <p><strong>IP Address:</strong> <span id="ip"></span></p>
-    <p><strong>Browser:</strong> <span id="browser"></span></p>
-    <p><strong>Operating System:</strong> <span id="os"></span></p>
-    <p><strong>Screen Resolution:</strong> <span id="resolution"></span></p>
-    
-    <!-- Prank Alert Message -->
-    <div id="alert" class="alert">
-        <p><span class="error">WARNING!</span> It appears that your IP address has been flagged for suspicious activity. Please proceed with caution.</p>
+    <div class="popup">
+        <p><strong>ALERT! VIRUS DETECTED</strong></p>
+        <p>Your computer has been compromised!</p>
+        <p>Immediate action is required.</p>
+        <button class="btn" onclick="addTime()">Fix Now</button>
+    </div>
+
+    <!-- System Info Pop-Up -->
+    <div id="systemInfo">
+        <h3>Your System Information</h3>
+        <p><strong>IP Address:</strong> <span id="ip"></span></p>
+        <p><strong>Browser:</strong> <span id="browser"></span></p>
+        <p><strong>Operating System:</strong> <span id="os"></span></p>
+        <p><strong>Screen Resolution:</strong> <span id="resolution"></span></p>
+    </div>
+
+    <!-- Countdown Timer -->
+    <div id="countdown">
+        Time remaining: <span id="time">15</span> seconds
+    </div>
+
+    <!-- Crash Screen -->
+    <div id="crashScreen" class="crash">
+        <p class="error">ERROR: System Crash Detected!</p>
+        <p class="error">System is shutting down...</p>
+        <p class="error">Please contact support immediately!</p>
+        <p>Performing diagnostics...</p>
+        <pre>Performing emergency shutdown... ██████████████████████</pre>
     </div>
 
     <script>
+        let countdownTime = 15; // Initial 15 seconds for the countdown
+        let countdownInterval;
+        let glitching = false;
+
         // Fetch public IP address
         fetch('https://api64.ipify.org?format=json')
             .then(response => response.json())
             .then(data => {
                 document.getElementById('ip').textContent = data.ip;
-                
-                // Simulate a warning that their IP is flagged for fun
-                setTimeout(() => {
-                    document.getElementById('alert').style.display = 'block';
-                }, 2000); // Delay the warning for 2 seconds to add suspense
             })
             .catch(error => {
                 document.getElementById('ip').textContent = 'Error fetching IP';
@@ -73,6 +162,55 @@
         document.getElementById('browser').textContent = browser;
         document.getElementById('os').textContent = os;
         document.getElementById('resolution').textContent = `${window.screen.width} x ${window.screen.height}`;
+
+        // Countdown Timer function
+        function startCountdown() {
+            countdownInterval = setInterval(function() {
+                document.getElementById('time').textContent = countdownTime;
+                countdownTime--;
+                if (countdownTime < 0) {
+                    clearInterval(countdownInterval); // Stop countdown
+                    if (!glitching) {
+                        playSound(); // Play sound when timer ends
+                        startGlitchEffect(); // Start glitch effect when timer finishes
+                    }
+                }
+            }, 1000);
+        }
+
+        // Function to show the system info pop-up
+        function showSystemInfo() {
+            document.querySelector('.popup').style.display = 'none'; // Hide the virus alert
+            document.getElementById('systemInfo').style.display = 'block'; // Show system info
+            document.getElementById('countdown').style.display = 'none'; // Hide countdown
+        }
+
+        // Add 5 seconds to the timer when "Fix Now" button is clicked
+        function addTime() {
+            countdownTime += 5;
+            if (!glitching) {
+                document.querySelector('.popup').style.display = 'none'; // Hide the virus alert
+                document.getElementById('systemInfo').style.display = 'block'; // Show system info
+                document.getElementById('countdown').style.display = 'block'; // Show countdown again
+                startCountdown(); // Restart the countdown
+            }
+        }
+
+        // Start the glitch effect when countdown ends
+        function startGlitchEffect() {
+            glitching = true;
+            document.body.classList.add('glitch'); // Add glitch animation to the body
+            document.getElementById('crashScreen').style.display = 'block'; // Show crash screen
+        }
+
+        // Function to play sound when the timer ends
+        function playSound() {
+            var audio = new Audio('https://drive.google.com/uc?export=download&id=1xupABqpZcOtIyefmrI6bXV9Mr1BkFbGY');
+            audio.play();
+        }
+
+        // Start countdown immediately when page loads
+        startCountdown();
     </script>
 </body>
 </html>
