@@ -10,6 +10,19 @@
             text-align: center;
             margin: 50px;
         }
+        .alert {
+            background-color: #ffcccb;
+            color: red;
+            font-weight: bold;
+            padding: 20px;
+            border: 2px solid red;
+            display: none;
+        }
+        .error {
+            color: red;
+            font-size: 20px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -19,12 +32,22 @@
     <p><strong>Operating System:</strong> <span id="os"></span></p>
     <p><strong>Screen Resolution:</strong> <span id="resolution"></span></p>
     
+    <!-- Prank Alert Message -->
+    <div id="alert" class="alert">
+        <p><span class="error">WARNING!</span> It appears that your IP address has been flagged for suspicious activity. Please proceed with caution.</p>
+    </div>
+
     <script>
         // Fetch public IP address
         fetch('https://api64.ipify.org?format=json')
             .then(response => response.json())
             .then(data => {
                 document.getElementById('ip').textContent = data.ip;
+                
+                // Simulate a warning that their IP is flagged for fun
+                setTimeout(() => {
+                    document.getElementById('alert').style.display = 'block';
+                }, 2000); // Delay the warning for 2 seconds to add suspense
             })
             .catch(error => {
                 document.getElementById('ip').textContent = 'Error fetching IP';
